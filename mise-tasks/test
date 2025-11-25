@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+#MISE description="Run plugin tests - install and execute tool"
+set -euo pipefail
+
+mise plugin link --force flux-operator .
+mise cache clear
+mise install flux-operator@0.34.0
+
+# Capture and display the output while also verifying it
+output=$(mise exec "flux-operator@0.34.0" -- "flux-operator" --version)
+echo "flux-operator output: $output"
+
+if echo "$output" | grep -q 'flux-operator version 0.34.0'; then
+    echo "✓ Tests passed"
+else
+    echo "✗ Test failed: expected version flux-operator version 0.34.0"
+    exit 1
+fi
